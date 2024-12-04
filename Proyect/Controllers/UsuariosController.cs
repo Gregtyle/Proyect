@@ -58,7 +58,7 @@ namespace Proyect.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("IdUsuario,TipoDocumento,Documento,Nombre,Apellido,Celular,Direccion,CorreoElectronico,Estado,FechaCreacion,IdRol")] Usuario usuario)
         {
-            // Validación: Verificar si el rol está activo
+            // Verificar si el rol está activo
             var rol = _context.Roles.FirstOrDefault(r => r.IdRol == usuario.IdRol);
             if (rol != null && !rol.Activo)
             {
@@ -89,6 +89,7 @@ namespace Proyect.Controllers
             ViewBag.IdRol = new SelectList(_context.Roles, "IdRol", "NombreRol", usuario.IdRol);
             return View(usuario);
         }
+
 
 
         // GET: Usuarios/Edit/5
@@ -122,7 +123,7 @@ namespace Proyect.Controllers
                 return NotFound();
             }
 
-            // Validación: Verificar si el rol está activo
+            // Verificar si el rol está activo
             var rol = _context.Roles.FirstOrDefault(r => r.IdRol == usuario.IdRol);
             if (rol != null && !rol.Activo)
             {
@@ -146,6 +147,10 @@ namespace Proyect.Controllers
             {
                 try
                 {
+                    // No se actualiza el documento, ya que es "quemado"
+                    var existingUser = _context.Usuarios.AsNoTracking().FirstOrDefault(u => u.IdUsuario == id);
+                    usuario.Documento = existingUser.Documento; // Mantener el documento sin cambios
+
                     _context.Update(usuario);
                     _context.SaveChanges();
                 }

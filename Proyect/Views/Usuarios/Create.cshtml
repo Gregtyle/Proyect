@@ -5,77 +5,90 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Crear Usuario</h1>
 
 <h4>Usuario</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            <!-- Muestra errores de validación generales -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Tipo de Documento -->
             <div class="form-group">
                 <label asp-for="TipoDocumento" class="control-label"></label>
                 <input asp-for="TipoDocumento" class="form-control" />
                 <span asp-validation-for="TipoDocumento" class="text-danger"></span>
             </div>
 
+            <!-- Documento -->
             <div class="form-group">
                 <label asp-for="Documento" class="control-label"></label>
                 <input asp-for="Documento" class="form-control" />
                 <span asp-validation-for="Documento" class="text-danger"></span>
             </div>
 
+            <!-- Nombre -->
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
                 <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
 
+            <!-- Apellido -->
             <div class="form-group">
                 <label asp-for="Apellido" class="control-label"></label>
                 <input asp-for="Apellido" class="form-control" />
                 <span asp-validation-for="Apellido" class="text-danger"></span>
             </div>
 
+            <!-- Celular -->
             <div class="form-group">
                 <label asp-for="Celular" class="control-label"></label>
                 <input asp-for="Celular" class="form-control" />
                 <span asp-validation-for="Celular" class="text-danger"></span>
             </div>
 
+            <!-- Dirección -->
             <div class="form-group">
                 <label asp-for="Direccion" class="control-label"></label>
                 <input asp-for="Direccion" class="form-control" />
                 <span asp-validation-for="Direccion" class="text-danger"></span>
             </div>
 
+            <!-- Correo Electrónico -->
             <div class="form-group">
                 <label asp-for="CorreoElectronico" class="control-label"></label>
                 <input asp-for="CorreoElectronico" class="form-control" />
                 <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
             </div>
 
+            <!-- Selección del Rol -->
             <div class="form-group">
                 <label asp-for="IdRol" class="control-label"></label>
                 <select asp-for="IdRol" class="form-control" asp-items="ViewBag.IdRol"></select>
                 <span asp-validation-for="IdRol" class="text-danger"></span>
             </div>
 
+            <!-- Botón para crear usuario -->
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success" />
+                <input type="submit" value="Crear" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
 
+<!-- Botón para regresar a la lista -->
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver a la lista</a>
 </div>
 
+<!-- Scripts para validaciones -->
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
 

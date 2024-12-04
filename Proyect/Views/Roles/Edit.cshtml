@@ -16,9 +16,10 @@
             <!-- Campo oculto para el Id del Rol -->
             <input type="hidden" asp-for="IdRol" />
 
-            <!-- Nombre del Rol -->
+
             <div class="form-group">
                 <label asp-for="NombreRol" class="control-label"></label>
+                <!-- Ya no debería tener validación para ser obligatorio -->
                 <input asp-for="NombreRol" class="form-control" readonly />
                 <span asp-validation-for="NombreRol" class="text-danger"></span>
             </div>
@@ -30,9 +31,12 @@
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
 
+            <!-- Botón de seleccionar/deseleccionar todos los permisos -->
+            <button type="button" id="toggleSelectAll" class="btn btn-secondary mb-3">Seleccionar Todos</button>
+
             <!-- Permisos asociados al Rol (Checkboxes) -->
             <div class="form-group">
-                <label class="control-label">Permisos:</label>
+                <label class="control-label">Permisos</label>
                 @if (ViewData["Permisos"] is List<Proyect.Models.Permiso> permisos && permisos.Any())
                 {
                     foreach (var permiso in permisos)
@@ -42,16 +46,16 @@
                                    class="form-check-input"
                                    name="selectedPermisos"
                                    value="@permiso.IdPermiso"
-                            @(ViewData["SelectedPermisos"] is List<int> selectedPermisos
-                                && selectedPermisos.Contains(permiso.IdPermiso) ? "checked" : "") />
+                            @if (ViewData["SelectedPermisos"] is List<int> selectedPermisos && selectedPermisos.Contains(permiso.IdPermiso))
+                            {
+                                @:checked
+                            } />
                             <label class="form-check-label">@permiso.NombrePermiso</label>
                         </div>
                     }
+
                 }
-                else
-                {
-                    <p>No hay permisos disponibles.</p>
-                }
+
             </div>
 
 
@@ -69,4 +73,24 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+             // Lógica para el botón de Seleccionar/Deseleccionar Todos
+             document.getElementById("toggleSelectAll").addEventListener("click", function () {
+                 // Obtener todos los checkboxes
+                 var checkboxes = document.querySelectorAll(".form-check-input");
+
+                 // Verificar si todos los checkboxes están seleccionados
+                 var allChecked = Array.from(checkboxes).every(function (checkbox) {
+                     return checkbox.checked;
+                 });
+
+                 // Alternar el estado de todos los checkboxes (marcarlos o desmarcarlos)
+                 checkboxes.forEach(function (checkbox) {
+                     checkbox.checked = !allChecked; // Si todos estaban seleccionados, desmarcamos, si no, marcamos
+                 });
+
+                 // Cambiar el texto del botón dependiendo de la acción
+                 document.getElementById("toggleSelectAll").textContent = allChecked ? "Seleccionar Todos" : "Deseleccionar Todos";
+             });
+    </script>
 };

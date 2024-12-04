@@ -145,10 +145,10 @@ namespace Proyect.Controllers
                 return NotFound();
             }
 
-            // Cargar el rol junto con sus permisos asociados
+            // Cargar el rol junto con sus permisos asociados desde la tabla intermedia RolesPermisos
             var role = await _context.Roles
                 .Include(r => r.RolesPermisos) // Incluir la relación RolesPermisos (los permisos asociados al rol)
-                .ThenInclude(rp => rp.IdPermisoNavigation) // Si tienes una navegación al modelo Permiso para obtener detalles sobre los permisos
+                .ThenInclude(rp => rp.IdPermisoNavigation) // Obtener detalles sobre los permisos asociados
                 .FirstOrDefaultAsync(r => r.IdRol == id); // Buscar el rol por ID
 
             // Si no se encuentra el rol, devolver NotFound
@@ -161,6 +161,7 @@ namespace Proyect.Controllers
             ViewData["Permisos"] = await _context.Permisos.ToListAsync();
 
             // Pasar los permisos seleccionados (los permisos asociados al rol) a la vista
+            // Aquí aseguramos que estamos pasando los permisos correctos desde la tabla intermedia RolesPermisos
             ViewData["SelectedPermisos"] = role.RolesPermisos
                 .Select(rp => rp.IdPermiso) // Obtener los IDs de los permisos asociados al rol
                 .ToList();
@@ -203,25 +204,24 @@ namespace Proyect.Controllers
                 {
                     // Actualizar el rol en la base de datos (solo los campos permitidos)
                     _context.Update(role);
-                    await _context.SaveChangesAsync(); // Guardar cambios en la base de datos
-
-                    // Eliminar los permisos asociados previamente al rol
+                    // Primero, eliminar los permisos asociados al rol
                     var permisosExistentes = _context.RolesPermisos.Where(rp => rp.IdRol == id).ToList();
                     _context.RolesPermisos.RemoveRange(permisosExistentes); // Eliminar los permisos antiguos
 
-                    // Si se seleccionaron nuevos permisos, agregarlos
+                    // Si se seleccionaron nuevos permisos, agregarlos a la tabla RolesPermisos
                     if (selectedPermisos != null && selectedPermisos.Count > 0)
                     {
                         var nuevosRolesPermisos = selectedPermisos.Select(permisoId => new RolesPermiso
                         {
                             IdRol = role.IdRol,
                             IdPermiso = permisoId
-                        });
+                        }).ToList();
+
                         _context.RolesPermisos.AddRange(nuevosRolesPermisos); // Agregar los nuevos permisos
                     }
 
                     // Guardar los cambios (tanto el rol como los permisos)
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); // Guardar cambios en la base de datos
                 }
                 catch (DbUpdateConcurrencyException)
                 {

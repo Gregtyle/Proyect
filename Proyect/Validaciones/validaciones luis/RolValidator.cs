@@ -12,7 +12,9 @@ namespace Proyect.Validaciones.ValidacionesLuis
                     .NotEmpty().WithMessage("El nombre del rol es obligatorio.")
                     .MaximumLength(50).WithMessage("El nombre del rol no puede exceder los 50 caracteres.")
                     .Must(nombre => !nombresExistentes.Contains(nombre))
-                    .WithMessage("El nombre del rol ya existe.");
+                    .WithMessage("El nombre del rol ya existe.")
+                    .When(x => x.IdRol == 0); // Solo validar el nombre si es un rol nuevo
+      
 
                 RuleFor(x => x.Descripcion)
                     .MaximumLength(200).WithMessage("La descripción no puede exceder los 200 caracteres.");
